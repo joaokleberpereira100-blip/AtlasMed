@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AtlasMed - Planos de Estudo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&display=swap">
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #eef2f5;
+            --fg-primary: #0f172a;
+            --fg-secondary: #475569;
+            --fg-tertiary: #94a3b8;
+            --accent-primary: #3b82f6;
+            --accent-secondary: #1e40af;
+            --accent-light: #dbeafe;
+            --success: #10b981;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+            --shadow-md: 0 4px 6px rgba(15, 23, 42, 0.07);
+            --shadow-lg: 0 10px 25px rgba(15, 23, 42, 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) {
+                --bg-primary: #0f172a;
+                --bg-secondary: #1e293b;
+                --bg-tertiary: #334155;
+                --fg-primary: #f1f5f9;
+                --fg-secondary: #cbd5e1;
+                --fg-tertiary: #94a3b8;
+                --accent-primary: #60a5fa;
+                --accent-secondary: #3b82f6;
+                --accent-light: #1e3a8a;
+                --border: #334155;
+                --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+                --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+                --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.5);
+                color-scheme: dark;
+            }
+        }
+
+        :root[data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --fg-primary: #f1f5f9;
+            --fg-secondary: #cbd5e1;
+            --fg-tertiary: #94a3b8;
+            --accent-primary: #60a5fa;
+            --accent-secondary: #3b82f6;
+            --accent-light: #1e3a8a;
+            --border: #334155;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.5);
+            color-scheme: dark;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--fg-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header & Navigation */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 40px;
+            z-index: 1000;
+            box-shadow: var(--shadow-sm);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            header:not([data-theme="light"]) {
+                background: rgba(15, 23, 42, 0.95);
+            }
+        }
+
+        header[data-theme="dark"] {
+            background: rgba(15, 23, 42, 0.95);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        .btn-enter {
+            padding: 10px 24px;
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-enter:hover {
+            background: var(--accent-secondary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-enter:active {
+            transform: translateY(0);
+        }
+
+        /* Main Content */
+        main {
+            padding-top: 70px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            padding: 80px 40px;
+            text-align: center;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .hero h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 52px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            color: var(--fg-primary);
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: var(--fg-secondary);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            line-height: 1.5;
+        }
+
+        /* Pricing Section */
+        .pricing {
+            flex: 1;
+            padding: 80px 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .pricing h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: 60px;
+            text-align: center;
+            color: var(--fg-primary);
+        }
+
+        .pricing-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            width: 100%;
+            justify-items: center;
+        }
+
+        .pricing-card {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 380px;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .pricing-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .pricing-card:hover {
+            border-color: var(--accent-primary);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-10px);
+        }
+
+        .pricing-card:hover::before {
+            left: 100%;
+        }
+
+        .pricing-card.featured {
+            border-color: var(--accent-primary);
+            background: linear-gradient(135deg, var(--accent-light) 0%, var(--bg-secondary) 100%);
+            transform: scale(1.05);
+            box-shadow: var(--shadow-lg);
+            animation: fadeInUp 0.8s ease 0.35s both;
+        }
+
+        .pricing-card.featured:hover {
+            transform: scale(1.05) translateY(-10px);
+        }
+
+        .plan-badge {
+            display: inline-block;
+            background: var(--accent-primary);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .plan-name {
+            font-family: 'Poppins', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--fg-primary);
+        }
+
+        .plan-description {
+            font-size: 14px;
+            color: var(--fg-secondary);
+            margin-bottom: 30px;
+            min-height: 40px;
+        }
+
+        .price-container {
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .price {
+            font-family: 'Poppins', sans-serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--accent-primary);
+            margin-bottom: 8px;
+        }
+
+        .price-period {
+            font-size: 14px;
+            color: var(--fg-secondary);
+        }
+
+        .savings {
+            display: inline-block;
+            background: var(--success);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 12px;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .plan-features li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: var(--fg-secondary);
+        }
+
+        .plan-features li:last-child {
+            border-bottom: none;
+        }
+
+        .plan-features li::before {
+            content: '✓';
+            color: var(--success);
+            font-weight: 700;
+            margin-right: 12px;
+            font-size: 16px;
+        }
+
+        .btn-plan {
+            width: 100%;
+            padding: 14px 24px;
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 15px;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-plan:hover {
+            background: var(--accent-secondary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-plan:active {
+            transform: translateY(0);
+        }
+
+        /* Modal Login */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-primary);
+            padding: 40px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+        }
+
+        .modal-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .modal-header h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--fg-primary);
+            margin-bottom: 8px;
+        }
+
+        .modal-header p {
+            font-size: 14px;
+            color: var(--fg-secondary);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--fg-primary);
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            background: var(--bg-secondary);
+            color: var(--fg-primary);
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+
+        .error-message {
+            display: none;
+            color: #ef4444;
+            font-size: 13px;
+            margin-top: 8px;
+            padding: 10px;
+            background: #fee2e2;
+            border-radius: 6px;
+            border-left: 3px solid #ef4444;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: shake 0.4s ease;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 12px 24px;
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            background: var(--accent-secondary);
+            transform: translateY(-2px);
+        }
+
+        .btn-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--fg-secondary);
+            cursor: pointer;
+            transition: color 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-close:hover {
+            color: var(--fg-primary);
+        }
+
+        .modal-content {
+            position: relative;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-secondary);
+            padding: 40px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            color: var(--fg-secondary);
+            font-size: 14px;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-10px);
+            }
+            75% {
+                transform: translateX(10px);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                padding: 0 20px;
+                height: 60px;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+            .btn-enter {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+
+            .hero {
+                padding: 60px 20px;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .pricing {
+                padding: 60px 20px;
+            }
+
+            .pricing h2 {
+                font-size: 28px;
+                margin-bottom: 40px;
+            }
+
+            .pricing-container {
+                gap: 20px;
+            }
+
+            .pricing-card.featured {
+                transform: scale(1);
+            }
+
+            .pricing-card.featured:hover {
+                transform: scale(1) translateY(-10px);
+            }
+
+            .modal-content {
+                padding: 30px 20px;
+                max-width: 90%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            main {
+                padding-top: 60px;
+            }
+
+            header {
+                height: 50px;
+                padding: 0 16px;
+            }
+
+            .hero h1 {
+                font-size: 28px;
+            }
+
+            .hero p {
+                font-size: 14px;
+            }
+
+            .pricing h2 {
+                font-size: 24px;
+            }
+
+            .plan-name {
+                font-size: 22px;
+            }
+
+            .price {
+                font-size: 36px;
+            }
+
+            .pricing-card {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">AtlasMed</div>
+        <button class="btn-enter" onclick="openLoginModal()">Entrar</button>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1>Sua Jornada Médica Começa Aqui</h1>
+            <p>Acesse a maior plataforma de estudo para estudantes de Medicina com 328 livros, ferramentas avançadas de análise e muito mais</p>
+        </section>
+
+        <section class="pricing">
+            <h2>Escolha seu Plano</h2>
+            <div class="pricing-container">
+                <!-- Plano Mensal -->
+                <div class="pricing-card">
+                    <div class="plan-badge">Flexível</div>
+                    <h3 class="plan-name">Mensal</h3>
+                    <p class="plan-description">Perfeito para conhecer a plataforma</p>
+                    <div class="price-container">
+                        <div class="price">R$ 110<span style="font-size: 18px; color: var(--fg-secondary);">/mês</span></div>
+                        <div class="price-period">Faturamento mensal</div>
+                    </div>
+                    <ul class="plan-features">
+                        <li>Acesso completo aos 328 livros</li>
+                        <li>Ferramentas de análise de PDF</li>
+                        <li>Resumos e questões</li>
+                        <li>Suporte por WhatsApp</li>
+                        <li>Cancelar a qualquer momento</li>
+                    </ul>
+                    <button class="btn-plan" onclick="selectPlan('Mensal', 110)">Escolher Plano</button>
+                </div>
+
+                <!-- Plano Anual -->
+                <div class="pricing-card featured">
+                    <div class="plan-badge" style="background: var(--success);">Economize</div>
+                    <h3 class="plan-name">Anual</h3>
+                    <p class="plan-description">Melhor valor para o ano todo</p>
+                    <div class="price-container">
+                        <div class="price">R$ 1.100<span style="font-size: 18px; color: var(--fg-secondary);">/ano</span></div>
+                        <div class="price-period">Faturamento anual</div>
+                        <div class="savings">💰 Economize 16,67%</div>
+                    </div>
+                    <ul class="plan-features">
+                        <li>Acesso completo aos 328 livros</li>
+                        <li>Ferramentas de análise de PDF</li>
+                        <li>Resumos e questões</li>
+                        <li>Suporte prioritário por WhatsApp</li>
+                        <li>Renovação automática</li>
+                    </ul>
+                    <button class="btn-plan" onclick="selectPlan('Anual', 1100)">Escolher Plano</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 AtlasMed. Todos os direitos reservados. | Plataforma de Estudo para Medicina</p>
+    </footer>
+
+    <!-- Modal de Login -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <button class="btn-close" onclick="closeLoginModal()">×</button>
+            <div class="modal-header">
+                <h2>Bem-vindo</h2>
+                <p>Faça login para acessar a plataforma</p>
+            </div>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="username">Usuário</label>
+                    <input type="text" id="username" placeholder="joaokleber100" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+                <div class="error-message" id="errorMessage"></div>
+                <button type="submit" class="btn-login">Entrar</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Credenciais válidas
+        const VALID_USERNAME = 'joaokleber100';
+        const VALID_PASSWORD = '12345678';
+
+        // Verificar se já está logado
+        window.addEventListener('load', () => {
+            const isLoggedIn = localStorage.getItem('atlasmed_logged_in');
+            if (isLoggedIn === 'true') {
+                window.location.href = 'index.html';
+            }
+        });
+
+        function openLoginModal() {
+            document.getElementById('loginModal').classList.add('active');
+            document.getElementById('username').focus();
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.remove('active');
+            document.getElementById('errorMessage').classList.remove('show');
+            document.getElementById('errorMessage').textContent = '';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+
+            if (username === VALID_USERNAME && password === VALID_PASSWORD) {
+                // Login bem-sucedido
+                localStorage.setItem('atlasmed_logged_in', 'true');
+                localStorage.setItem('atlasmed_username', username);
+                errorMessage.classList.remove('show');
+
+                // Redirecionar após animação
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 500);
+            } else {
+                // Login falhou
+                errorMessage.textContent = 'Usuário ou senha incorretos. Tente novamente.';
+                errorMessage.classList.add('show');
+            }
+        }
+
+        function selectPlan(planName, price) {
+            // Número do WhatsApp (adicione aqui)
+            const whatsappNumber = '5585988887474'; // Exemplo, mude para seu número
+            const message = `Olá! Gostaria de contratar o plano ${planName} (R$ ${price}). Como posso proceder?`;
+            const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+
+            // Abrir WhatsApp
+            window.open(whatsappLink, '_blank');
+        }
+
+        // Fechar modal ao clicar fora
+        document.getElementById('loginModal').addEventListener('click', (e) => {
+            if (e.target.id === 'loginModal') {
+                closeLoginModal();
+            }
+        });
+
+        // Permitir Enter para fazer login
+        document.getElementById('password').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.querySelector('.btn-login').click();
+            }
+        });
+    </script>
+</body>
+</html>
