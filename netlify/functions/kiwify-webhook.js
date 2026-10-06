@@ -6,10 +6,17 @@
  * Ainda NAO libera acesso automaticamente: apenas registra.
  */
 
-const APROVADO = ['paid', 'approved', 'confirmed', 'order_approved', 'subscription_renewed'];
+// Status e eventos que indicam pagamento confirmado
+const APROVADO = [
+  'paid', 'approved', 'confirmed', 'order_approved', 'subscription_renewed',
+  'pix_received', 'payment_received', 'boleto_paid', 'card_paid', 'order_paid'
+];
+
+// Status e eventos que indicam recusa ou cancelamento
 const RECUSADO = [
   'refused', 'failed', 'order_rejected', 'refunded', 'order_refunded',
-  'chargedback', 'chargeback', 'subscription_canceled', 'subscription_late'
+  'chargedback', 'chargeback', 'subscription_canceled', 'subscription_late',
+  'pix_expired', 'boleto_expired', 'card_declined', 'payment_expired'
 ];
 
 const SENSIVEL = /cpf|cnpj|mobile|phone|telefone|celular|address|endereco|street|zipcode|cep|^ip$|card|token|signature/i;
