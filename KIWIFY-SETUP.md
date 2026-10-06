@@ -1,78 +1,33 @@
 # Integração Kiwify - AtlasMed
 
-## Status Atual ✅
+## Como funciona
 
-Você já criou os dois produtos e temos os links:
-- **Mensal**: https://pay.kiwify.com.br/xlpDZiO
-- **Anual**: https://pay.kiwify.com.br/4nzHrR3
+1. O aluno cria a conta no site e escolhe um plano; o botão leva ao checkout do Kiwify
+   (mensal: https://pay.kiwify.com.br/xlpDZiO, anual: https://pay.kiwify.com.br/4nzHrR3).
+2. O Kiwify avisa o webhook `/.netlify/functions/kiwify-webhook` a cada evento.
+3. O webhook atualiza o papel `member` no Netlify Identity pelo **e-mail do comprador**:
+   - compra aprovada / assinatura renovada: libera o acesso (cria a conta e envia
+     e-mail de definição de senha se ela ainda não existir);
+   - reembolso, chargeback, assinatura cancelada ou atrasada: retira o acesso.
+4. O arquivo `_redirects` só abre `/app/` para quem tem o papel `member`.
 
-## O que foi feito
+O cadastro sozinho não dá acesso. Contas de acesso vitalício ficam na lista
+`VITALICIO`, repetida em `kiwify-webhook.js` e `identity-signup.js`.
 
-1. ✅ Links de checkout integrados no site
-2. ✅ Botões de compra agora redirecionam para Kiwify
-3. ✅ Webhook criado para processar pagamentos (`netlify/functions/kiwify-webhook.js`)
+## Configuração no Kiwify
 
-## Próximos passos
+Webhook apontando para
+`https://atlasmedparaestudantes.netlify.app/.netlify/functions/kiwify-webhook`,
+com os eventos: compra aprovada, compra reembolsada, chargeback, assinatura
+renovada, assinatura cancelada e assinatura atrasada.
 
-### 1. Obter a URL do Webhook
+## Segurança (obrigatório antes de divulgar)
 
-A URL do seu webhook será:
-```
-https://seu-dominio.netlify.app/.netlify/functions/kiwify-webhook
-```
+No Netlify, em Project configuration → Environment variables, crie
+`KIWIFY_WEBHOOK_TOKEN` com o token exibido na tela do webhook no Kiwify e faça
+um novo deploy. Sem ela, o webhook aceita chamadas de qualquer origem.
 
-Substitua `seu-dominio` pelo seu domínio real. Exemplo:
-```
-https://atlasmed.netlify.app/.netlify/functions/kiwify-webhook
-```
+## Conferindo
 
-### 2. Configurar Webhook no Kiwify
-
-1. Acesse https://admin.kiwify.com.br/
-2. Vá para **Configurações** → **Webhooks** (ou similar)
-3. Adicione uma nova notificação/webhook
-4. Cole a URL do webhook acima
-5. Escolha os eventos:
-   - ✅ Pagamento aprovado/confirmado
-   - ✅ Pagamento recusado
-6. Salve
-
-### 3. Dados que o Kiwify enviará
-
-O webhook espera receber JSON assim:
-```json
-{
-  "email": "cliente@exemplo.com",
-  "product": "mensal ou anual",
-  "status": "approved|confirmed|paid|failed|refused"
-}
-```
-
-### 4. Como funciona o fluxo
-
-1. Cliente clica em "Ir para pagamento no Kiwify"
-2. É redirecionado para a página de checkout do Kiwify
-3. Cliente paga (qualquer método: Pix, cartão, boleto)
-4. Kiwify confirma o pagamento
-5. Kiwify envia notificação para nosso webhook
-6. Webhook registra o pagamento (você pode adicionar lógica de banco de dados depois)
-7. **Futuramente**: Webhook concede acesso automático (role "member") ao usuário
-
-## Segurança
-
-- O webhook está em `/netlify/functions/` (seguro)
-- Você pode adicionar validação de assinatura do Kiwify depois (secret key)
-- Por enquanto, apenas valida os campos obrigatórios
-
-## Próxima Fase
-
-Quando quiser automatizar o acesso:
-1. Criar tabela de pagamentos no banco de dados (Supabase, etc)
-2. Modificar o webhook para atribuir role "member" ao usuário automaticamente
-3. Usar email do cliente para linkar com a conta no Netlify Identity
-
-## Links importantes
-
-- Seu site: [a ser publicado]
-- Admin Kiwify: https://admin.kiwify.com.br/
-- Suporte Kiwify: https://help.kiwify.com.br/
+Netlify → Functions → kiwify-webhook → Function log. Cada chamada termina com
+uma linha `[Kiwify] Resultado: ... | acesso: ...`.

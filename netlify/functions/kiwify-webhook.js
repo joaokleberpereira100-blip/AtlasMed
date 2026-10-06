@@ -1,6 +1,7 @@
 /**
  * Webhook do Kiwify: libera o acesso ao app quando o pagamento e confirmado
- * (Pix, cartao ou boleto).
+ * (Pix, cartao ou boleto) e retira quando a assinatura deixa de estar em dia
+ * (reembolso, chargeback, cancelamento ou atraso).
  *
  * Pagamento aprovado + e-mail do comprador:
  *   - ja existe conta com esse e-mail  -> recebe o papel "member"
@@ -19,14 +20,21 @@ const crypto = require('crypto');
 
 const PAPEL = 'member';
 
+// Contas com acesso vitalicio: nunca perdem o acesso, com ou sem pagamento.
+// Mantenha esta lista igual a de identity-signup.js
+const VITALICIO = ['joaokleberpereira100@gmail.com'];
+
 // Pagamento confirmado
 const APROVADO = ['paid', 'approved', 'order_approved', 'subscription_renewed'];
 
-// Eventos que NAO devem liberar acesso, mesmo que o pedido original conste como pago
-const NEGATIVO = [
-  'refused', 'refunded', 'chargedback', 'chargeback', 'canceled', 'cancelled',
-  'order_rejected', 'order_refunded', 'subscription_canceled', 'subscription_late'
+// Assinatura deixou de estar em dia: retira o acesso
+const REVOGA = [
+  'refunded', 'chargedback', 'chargeback',
+  'order_refunded', 'subscription_canceled', 'subscription_late'
 ];
+
+// Nao liberam acesso, mas tambem nao retiram (ex.: cartao recusado numa tentativa)
+const NEGATIVO = ['refused', 'canceled', 'cancelled', 'order_rejected'];
 
 const SENSIVEL = /cpf|cnpj|mobile|phone|telefone|celular|address|endereco|street|zipcode|cep|^ip$|card|token|signature|pix_code|boleto/i;
 
@@ -141,6 +149,21 @@ async function liberarAcesso(identity, email, nome) {
   }
 }
 
+// Retira o papel "member" da conta desse e-mail. Seguro repetir.
+async function revogarAcesso(identity, email) {
+  if (VITALICIO.includes(email)) return 'mantido_acesso_vitalicio';
+  const u = await buscarUsuario(identity, email);
+  if (!u) return 'sem_conta';
+  const meta = u.app_metadata || {};
+  const papeis = Array.isArray(meta.roles) ? meta.roles : [];
+  if (!papeis.includes(PAPEL)) return 'ja_estava_sem_acesso';
+  await api(identity, '/admin/users/' + u.id, {
+    method: 'PUT',
+    json: { app_metadata: { ...meta, roles: papeis.filter((r) => r !== PAPEL) } }
+  });
+  return 'acesso_retirado';
+}
+
 exports.handler = async (event, context) => {
   if (event.httpMethod !== 'POST') {
     console.log(`[Kiwify] Metodo ${event.httpMethod} ignorado (esperado POST)`);
@@ -183,11 +206,12 @@ exports.handler = async (event, context) => {
   const evento = String(pegar(p, ['webhook_event_type', 'event']) || '').toLowerCase();
 
   let resultado = 'ignorado';
-  if (NEGATIVO.includes(status) || NEGATIVO.includes(evento)) resultado = 'nao_aprovado';
+  if (REVOGA.includes(status) || REVOGA.includes(evento)) resultado = 'revogado';
+  else if (NEGATIVO.includes(status) || NEGATIVO.includes(evento)) resultado = 'nao_aprovado';
   else if (APROVADO.includes(status) || APROVADO.includes(evento)) resultado = 'aprovado';
 
   let acesso = 'nao_se_aplica';
-  if (resultado === 'aprovado') {
+  if (resultado === 'aprovado' || resultado === 'revogado') {
     const identity = context && context.clientContext && context.clientContext.identity;
     if (!email) {
       acesso = 'ERRO_sem_email';
@@ -195,9 +219,11 @@ exports.handler = async (event, context) => {
       acesso = 'ERRO_identity_indisponivel';
     } else {
       try {
-        acesso = await liberarAcesso(identity, email, nome);
+        acesso = resultado === 'aprovado'
+          ? await liberarAcesso(identity, email, nome)
+          : await revogarAcesso(identity, email);
       } catch (err) {
-        console.log('[Kiwify] Falha ao liberar acesso:', err.message);
+        console.log('[Kiwify] Falha ao atualizar acesso:', err.message);
         acesso = 'ERRO_api_identity';
       }
     }
@@ -207,8 +233,8 @@ exports.handler = async (event, context) => {
     `[Kiwify] Resultado: ${resultado} | acesso: ${acesso} | status="${status}" | evento="${evento}" | email=${email ? mascarar(email) : 'NAO ENCONTRADO'} | produto=${produto || 'NAO ENCONTRADO'}`
   );
 
-  // Pagamento aprovado que nao conseguimos liberar: responde erro para o
-  // Kiwify tentar de novo, em vez de perder a liberacao em silencio.
+  // Nao conseguimos atualizar o acesso: responde erro para o Kiwify tentar
+  // de novo, em vez de perder a liberacao ou a retirada em silencio.
   if (acesso.startsWith('ERRO_api') || acesso === 'ERRO_identity_indisponivel') {
     return responder(500, { received: true, resultado, acesso });
   }

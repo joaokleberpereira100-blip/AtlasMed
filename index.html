@@ -625,6 +625,16 @@ html.js:not(.rm) .rv.in.d1{animation-delay:.12s}
       <p class="sub">Os dois planos dão acesso a toda a plataforma. A diferença está no preço: no anual, você paga 10 meses e usa 12.</p>
     </div>
 
+    <div id="semplano" hidden role="status" aria-live="polite" style="max-width:940px;margin:28px auto 28px;padding:20px 24px;border-radius:20px;background:var(--soft);border-left:4px solid var(--tl);display:grid;gap:10px">
+      <strong id="sp-t" style="color:var(--pr);font-size:1.05rem">Sua conta ainda não tem um plano ativo</strong>
+      <p id="sp-m" style="color:var(--mu);font-size:.95rem;margin:0;line-height:1.5"></p>
+      <p id="sp-r" hidden style="color:var(--pr);font-size:.95rem;margin:0;line-height:1.5;font-weight:600"></p>
+      <div style="display:flex;gap:4px 22px;flex-wrap:wrap;align-items:center">
+        <button class="link" id="sp-check" type="button" style="color:var(--pr);font-weight:600;text-decoration:underline;padding:6px 0">Já paguei: verificar acesso</button>
+        <button class="link" id="sp-out" type="button" style="color:var(--pr);font-weight:600;text-decoration:underline;padding:6px 0">Sair da conta</button>
+      </div>
+    </div>
+
     <div class="plans">
       <article class="plan rv" data-plan="mensal" id="plan-mensal">
         <h3>Mensal</h3>
@@ -671,7 +681,7 @@ html.js:not(.rm) .rv.in.d1{animation-delay:.12s}
       <div class="cmp-row"><span>Plano mensal</span><div class="track"><i style="--w:100%"></i></div><b id="c-cheio">R$ 1.320</b></div>
       <div class="cmp-row"><span>Plano anual</span><div class="track"><i class="g" style="--w:83.33%"></i><em id="c-eco">−R$ 220</em></div><b id="c-anual">R$ 1.100</b></div>
     </div>
-    <p class="fine">Ao escolher um plano, você conversa com um atendente no WhatsApp para concluir.</p>
+    <p class="fine">Ao escolher um plano, você conclui o pagamento no Kiwify. O acesso é liberado automaticamente após a confirmação do pagamento.</p>
 
     <!-- AVISO DE RENOVAÇÃO ===== -->
     <div class="payment-info rv" style="max-width:940px;margin:44px auto 0;padding:20px 24px;border-radius:20px;background:var(--soft);border-left:4px solid var(--tl);display:grid;gap:12px">
@@ -818,7 +828,8 @@ function choose(key){
   // Redireciona para Kiwify
   const kiwifyLink = KIWIFY[key];
   if (kiwifyLink) {
-    wa.href = kiwifyLink;
+    const u = AUTH && AUTH.user();
+    wa.href = kiwifyLink + (u && u.email ? '?email=' + encodeURIComponent(u.email) : '');
     wa.setAttribute('target', '_blank');
     wa.removeAttribute('aria-disabled');
     $('#wa-t').textContent = 'Ir para pagamento no Kiwify';
@@ -836,7 +847,7 @@ $('#pick-change').addEventListener('click',()=>{ $('.plans').scrollIntoView({blo
 /* ====== LOGIN / CADASTRO (Netlify Identity) ====== */
 const dlg=$('#dlg'), form=$('#lf'), err=$('#err'), okm=$('#okm'), em=$('#em'), pI=$('#p'), nm=$('#nm'), go=$('#go');
 let mode='in', reset=false;
-const T={in:['Entrar na plataforma','Use sua conta para acessar o AtlasMed.','Entrar'],up:['Crie sua conta','Cadastre-se grátis para entrar no AtlasMed.','Criar conta'],fg:['Recuperar senha','Informe seu e-mail e enviaremos um link para criar uma nova senha.','Enviar link'],rs:['Nova senha','Escolha uma nova senha para a sua conta.','Salvar nova senha']};
+const T={in:['Entrar na plataforma','Use sua conta para acessar o AtlasMed.','Entrar'],up:['Crie sua conta','Crie sua conta e escolha um plano para acessar o AtlasMed.','Criar conta'],fg:['Recuperar senha','Informe seu e-mail e enviaremos um link para criar uma nova senha.','Enviar link'],rs:['Nova senha','Escolha uma nova senha para a sua conta.','Salvar nova senha']};
 function show(el,on){ el.hidden=!on; }
 function setMode(m){
   mode=m; err.hidden=true; okm.hidden=true;
@@ -853,8 +864,33 @@ function setMode(m){
 }
 let gOn=false;
 if(AUTH) AUTH.settings().then(st=>{ gOn=!!(st&&st.external&&st.external.google); if(dlg.open) setMode(mode); else { show($('#gg'),false); } });
+/* Só entra no app quem tem assinatura ativa; quem não tem vê os planos. */
+const sp=$('#semplano');
+function semPlano(aviso){
+  const u=(AUTH&&AUTH.user())||{};
+  $('#sp-m').textContent='Você está logado como '+(u.email||'sua conta')+'. Escolha um plano abaixo e pague usando este mesmo e-mail: o acesso é liberado automaticamente assim que o pagamento for confirmado.';
+  const r=$('#sp-r'); r.textContent=aviso||''; r.hidden=!aviso;
+  if(dlg.open) dlg.close();
+  sp.hidden=false;
+  const sel=$('[data-plan].sel'); if(sel) choose(sel.dataset.plan);
+  sp.scrollIntoView({block:'center',behavior:rm?'auto':'smooth'});
+}
+async function enter(aviso){
+  let ok=false, falha=false;
+  try{ ok=await AUTH.member(); }catch(e){ falha=true; }
+  if(ok){ location.replace(APP); return true; }
+  if(!logged()){ openLogin('in'); return false; }
+  semPlano(falha?'Não foi possível verificar agora. Confira a internet e tente de novo.':aviso);
+  return false;
+}
+$('#sp-check').addEventListener('click',async e=>{
+  const b=e.currentTarget, t=b.textContent; b.disabled=true; b.textContent='Verificando…';
+  await enter('Ainda não encontramos um pagamento confirmado para este e-mail. Pix e cartão costumam liberar em poucos minutos; boleto pode levar até 3 dias úteis.');
+  b.disabled=false; b.textContent=t;
+});
+$('#sp-out').addEventListener('click',async()=>{ await AUTH.logout(); sp.hidden=true; });
 function openLogin(m){
-  if(m==='in' && logged()){ location.href=APP; return; }
+  if(m==='in' && logged()){ enter(); return; }
   reset=false; setMode(m); if(!dlg.open) dlg.showModal(); setTimeout(()=>(m==='up'?nm:em).focus(),30);
 }
 $$('[data-login]').forEach(b=>b.addEventListener('click',()=>openLogin('in')));
@@ -877,12 +913,12 @@ form.addEventListener('submit',async e=>{
   if((mode==='up'||mode==='rs')&&pw.length<8){ fail('A senha precisa ter pelo menos 8 caracteres.'); pI.focus(); return; }
   go.disabled=true; go.textContent='Aguarde…';
   try{
-    if(mode==='in'){ await AUTH.login(email,pw); go.textContent='Entrando…'; location.replace(APP); return; }
+    if(mode==='in'){ await AUTH.login(email,pw); go.textContent='Entrando…'; await enter(); return; }
     if(mode==='up'){ const r=await AUTH.signup(name,email,pw);
-      if(r.done){ go.textContent='Conta criada…'; location.replace(APP); return; }
+      if(r.done){ go.textContent='Conta criada…'; await enter(); return; }
       good('Conta criada! Enviamos um link de confirmação para '+email+'. Confirme e depois use Entrar.'); go.disabled=false; go.textContent=label; setTimeout(()=>{},0); return; }
     if(mode==='fg'){ await AUTH.recover(email); good('Se este e-mail tiver conta, o link de recuperação já está a caminho. Confira também o spam.'); go.disabled=false; go.textContent=label; return; }
-    if(mode==='rs'){ await AUTH.update({password:pw}); location.replace(APP); return; }
+    if(mode==='rs'){ await AUTH.update({password:pw}); await enter(); return; }
   }catch(x){ go.disabled=false; go.textContent=label; fail(x.message||'Não foi possível concluir.'); }
 });
 
@@ -893,7 +929,7 @@ form.addEventListener('submit',async e=>{
   if(!r){ if(/[?&]entrar=1/.test(location.search)){ history.replaceState(null,'',location.pathname); openLogin('in'); } return; }
   if(r.error){ openLogin('in'); fail(r.error); return; }
   if(r.recovery){ reset=true; setMode('rs'); dlg.showModal(); return; }
-  if(r.login) location.replace(APP);
+  if(r.login) enter();
 })();
 
 /* ====== CABEÇALHO ====== */

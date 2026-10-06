@@ -59,6 +59,13 @@ var A={
     var s=load();if(!s||!s.refresh_token)return false;
     try{var tk=await A.token();if(!tk)return false;s=load();if(!s.user)await fetchUser(s);return true}
     catch(e){return !!load()}},
+  /* true = a conta tem assinatura ativa (papel "member"). Renova o token para o
+     papel recém-liberado valer na hora, sem precisar sair e entrar de novo. */
+  member:async function(){
+    var s=load();if(!s||!s.refresh_token)return false;
+    var tk=await A.token(true);if(!tk)return false;
+    s=load();await fetchUser(s);
+    return (s.user.roles||[]).indexOf('member')>=0},
   update:async function(patch){
     var tk=await A.token();if(!tk)throw new Error('Sessão expirada. Entre novamente.');
     var u=await call('/user',{method:'PUT',token:tk,json:patch}),s=load();s.user=slim(u);store(s);return s.user},
