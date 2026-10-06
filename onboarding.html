@@ -380,6 +380,12 @@
       if (e.key === 'ArrowRight') nextStep();
       if (e.key === 'ArrowLeft') previousStep();
     });
+
+    // Função para reiniciar o onboarding (pode ser chamada de qualquer lugar)
+    window.restartOnboarding = function() {
+      localStorage.removeItem('atlasmed_onboarding_done');
+      location.reload();
+    };
   </script>
 
 </body>

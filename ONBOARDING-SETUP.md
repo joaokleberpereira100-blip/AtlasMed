@@ -158,13 +158,67 @@ Se quiser adicionar depois:
 - Vídeos curtos em cada passo
 - Integração com analytics para rastrear conclusão
 
+## 🔄 Botão "Ver tour novamente"
+
+Os usuários podem querer rever o tour. Você pode adicionar um botão em qualquer lugar do seu app.
+
+### Opção 1: Botão flutuante no canto (Recomendado)
+
+```javascript
+<script src="onboarding-helper.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    AtlasmedOnboarding.createButton({
+      position: 'bottom-right',    // 'bottom-right' ou 'bottom-left'
+      text: '? Ajuda',
+      backgroundColor: '#12347f',
+      textColor: '#fff'
+    });
+  });
+</script>
+```
+
+### Opção 2: Botão em um elemento específico
+
+```html
+<button id="help-btn" class="btn">Ver tour</button>
+
+<script src="onboarding-helper.js"></script>
+<script>
+  document.getElementById('help-btn').addEventListener('click', () => {
+    AtlasmedOnboarding.restartTour();
+  });
+</script>
+```
+
+### Opção 3: Link em um menu de configurações
+
+```html
+<nav id="user-menu">
+  <!-- Seus outros itens de menu -->
+</nav>
+
+<script src="onboarding-helper.js"></script>
+<script>
+  AtlasmedOnboarding.addToMenu(document.getElementById('user-menu'));
+</script>
+```
+
+### Opção 4: Chamar diretamente no console
+
+```javascript
+// Usuário pode executar no console do navegador:
+AtlasmedOnboarding.restartTour();
+```
+
 ## 🧪 Teste localmente
 
 1. Abra `onboarding.html` no navegador
 2. Teste navegação (Anterior, Próximo, Pular)
 3. Feche e reabra (não deve aparecer mais)
-4. Reset no console: `localStorage.removeItem('atlasmed_onboarding_done')`
-5. Recarregue (deve aparecer novamente)
+4. Clique no botão "Ver tour novamente" (se implementar)
+5. O tour deve aparecer novamente
+6. Reset manual no console: `localStorage.removeItem('atlasmed_onboarding_done')` + `location.reload()`
 
 ## 📞 Suporte
 
