@@ -1,0 +1,4 @@
+# O app só abre para quem está logado (papel "member", dado pela função identity-signup).
+/app        /app/        301
+/app/*      /app/:splat  200!  Role=member
+/app/*      /?entrar=1   302!

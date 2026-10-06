@@ -1,5 +1,11 @@
 /*
   X-Content-Type-Options: nosniff
 
-/index.html
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+/app/*
+  Cache-Control: no-store
+
+/auth.js
   Cache-Control: public, max-age=0, must-revalidate
