@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bem-vindo ao AtlasMed</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    .onboarding-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .onboarding-modal {
+      background: white;
+      border-radius: 24px;
+      padding: 40px 36px;
+      max-width: 520px;
+      width: 90%;
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.3);
+      animation: slideUp 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .ob-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      margin: 0 auto;
+    }
+
+    .ob-icon.step-1 {
+      background: #e8eff9;
+      color: #12347f;
+    }
+
+    .ob-icon.step-2 {
+      background: #dcf3e9;
+      color: #0b6b4f;
+    }
+
+    .ob-icon.step-3 {
+      background: #ffeee8;
+      color: #e8604a;
+    }
+
+    .ob-icon.step-4 {
+      background: #e9f0ff;
+      color: #3a63c8;
+    }
+
+    .ob-icon.step-5 {
+      background: #fff3e8;
+      color: #ff8a00;
+    }
+
+    h2 {
+      font-size: 28px;
+      color: #1a1a1a;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    p {
+      font-size: 16px;
+      line-height: 1.6;
+      color: #555;
+      text-align: center;
+    }
+
+    .ob-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 12px;
+      justify-content: center;
+    }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .ob-btn-primary {
+      background: #12347f;
+      color: white;
+      flex: 1;
+      min-height: 48px;
+    }
+
+    .ob-btn-primary:hover {
+      background: #0e2666;
+      transform: translateY(-2px);
+    }
+
+    .ob-btn-secondary {
+      background: #f0f0f0;
+      color: #555;
+      flex: 1;
+      min-height: 48px;
+    }
+
+    .ob-btn-secondary:hover {
+      background: #e0e0e0;
+    }
+
+    .ob-skip {
+      background: none;
+      border: 0;
+      color: #999;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 8px 0;
+    }
+
+    .ob-skip:hover {
+      color: #555;
+    }
+
+    .ob-dots {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 16px;
+    }
+
+    .ob-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ddd;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .ob-dot.active {
+      background: #12347f;
+      width: 24px;
+      border-radius: 4px;
+    }
+
+    @media (max-width: 520px) {
+      .onboarding-modal {
+        padding: 28px 20px;
+        border-radius: 20px;
+      }
+
+      h2 {
+        font-size: 22px;
+      }
+
+      p {
+        font-size: 15px;
+      }
+
+      button {
+        padding: 10px 18px;
+        font-size: 14px;
+      }
+
+      .ob-icon {
+        width: 64px;
+        height: 64px;
+        font-size: 32px;
+      }
+    }
+
+    /* Estados escondidos */
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="onboarding-overlay" id="onboardingOverlay">
+    <div class="onboarding-modal">
+      <!-- PASSO 1: Boas-vindas -->
+      <div class="step" id="step-1">
+        <div class="ob-icon step-1">👋</div>
+        <h2>Bem-vindo ao AtlasMed!</h2>
+        <p>Vamos te mostrar como aproveitar ao máximo a plataforma em apenas 2 minutos.</p>
+        <div class="ob-buttons">
+          <button class="ob-btn-primary" onclick="nextStep()">Começar tour</button>
+        </div>
+        <button class="ob-skip" onclick="skipOnboarding()">Pular para depois</button>
+      </div>
+
+      <!-- PASSO 2: Busca por assunto -->
+      <div class="step hidden" id="step-2">
+        <div class="ob-icon step-2">🔍</div>
+        <h2>Busque por assunto</h2>
+        <p>Digite qualquer doença, estrutura ou fármaco. O AtlasMed organiza os livros por perspectiva: fisiologia, farmacologia, semiologia e outras.</p>
+        <div class="ob-buttons">
+          <button class="ob-btn-secondary" onclick="previousStep()">Voltar</button>
+          <button class="ob-btn-primary" onclick="nextStep()">Próximo</button>
+        </div>
+        <div class="ob-dots">
+          <span class="ob-dot active" onclick="goToStep(2)"></span>
+          <span class="ob-dot" onclick="goToStep(3)"></span>
+          <span class="ob-dot" onclick="goToStep(4)"></span>
+          <span class="ob-dot" onclick="goToStep(5)"></span>
+        </div>
+      </div>
+
+      <!-- PASSO 3: Biblioteca -->
+      <div class="step hidden" id="step-3">
+        <div class="ob-icon step-3">📚</div>
+        <h2>Acesse a biblioteca</h2>
+        <p>Navegue pelos 328 livros, filtre por disciplina e idioma. Cada livro tem o link da fonte oficial para você baixar o PDF.</p>
+        <div class="ob-buttons">
+          <button class="ob-btn-secondary" onclick="previousStep()">Voltar</button>
+          <button class="ob-btn-primary" onclick="nextStep()">Próximo</button>
+        </div>
+        <div class="ob-dots">
+          <span class="ob-dot" onclick="goToStep(2)"></span>
+          <span class="ob-dot active" onclick="goToStep(3)"></span>
+          <span class="ob-dot" onclick="goToStep(4)"></span>
+          <span class="ob-dot" onclick="goToStep(5)"></span>
+        </div>
+      </div>
+
+      <!-- PASSO 4: Estude PDF -->
+      <div class="step hidden" id="step-4">
+        <div class="ob-icon step-4">📖</div>
+        <h2>Estude seus PDFs</h2>
+        <p>Anexe qualquer PDF e receba automaticamente: resumo por assunto, questões com gabarito, tradução lado a lado e anotações com caneta.</p>
+        <div class="ob-buttons">
+          <button class="ob-btn-secondary" onclick="previousStep()">Voltar</button>
+          <button class="ob-btn-primary" onclick="nextStep()">Próximo</button>
+        </div>
+        <div class="ob-dots">
+          <span class="ob-dot" onclick="goToStep(2)"></span>
+          <span class="ob-dot" onclick="goToStep(3)"></span>
+          <span class="ob-dot active" onclick="goToStep(4)"></span>
+          <span class="ob-dot" onclick="goToStep(5)"></span>
+        </div>
+      </div>
+
+      <!-- PASSO 5: Começar -->
+      <div class="step hidden" id="step-5">
+        <div class="ob-icon step-5">🚀</div>
+        <h2>Pronto para começar?</h2>
+        <p>Você já tem tudo que precisa. Explore a busca, adicione PDFs e comece a estudar com as ferramentas do AtlasMed.</p>
+        <div class="ob-buttons">
+          <button class="ob-btn-secondary" onclick="previousStep()">Voltar</button>
+          <button class="ob-btn-primary" onclick="finishOnboarding()">Começar a estudar</button>
+        </div>
+        <div class="ob-dots">
+          <span class="ob-dot" onclick="goToStep(2)"></span>
+          <span class="ob-dot" onclick="goToStep(3)"></span>
+          <span class="ob-dot" onclick="goToStep(4)"></span>
+          <span class="ob-dot active" onclick="goToStep(5)"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentStep = 1;
+    const totalSteps = 5;
+
+    // Verificar se já viu o onboarding
+    function shouldShowOnboarding() {
+      return !localStorage.getItem('atlasmed_onboarding_done');
+    }
+
+    // Inicializar onboarding
+    function initOnboarding() {
+      if (!shouldShowOnboarding()) {
+        document.getElementById('onboardingOverlay').remove();
+      }
+    }
+
+    // Ir para próximo passo
+    function nextStep() {
+      if (currentStep < totalSteps) {
+        goToStep(currentStep + 1);
+      }
+    }
+
+    // Voltar para passo anterior
+    function previousStep() {
+      if (currentStep > 1) {
+        goToStep(currentStep - 1);
+      }
+    }
+
+    // Ir para passo específico
+    function goToStep(step) {
+      if (step < 1 || step > totalSteps) return;
+
+      // Esconder todos os passos
+      for (let i = 1; i <= totalSteps; i++) {
+        const el = document.getElementById(`step-${i}`);
+        if (el) el.classList.add('hidden');
+      }
+
+      // Mostrar passo atual
+      const current = document.getElementById(`step-${step}`);
+      if (current) current.classList.remove('hidden');
+
+      currentStep = step;
+    }
+
+    // Pular onboarding
+    function skipOnboarding() {
+      localStorage.setItem('atlasmed_onboarding_done', 'true');
+      document.getElementById('onboardingOverlay').remove();
+    }
+
+    // Finalizar onboarding
+    function finishOnboarding() {
+      localStorage.setItem('atlasmed_onboarding_done', 'true');
+      document.getElementById('onboardingOverlay').remove();
+      // Scroll para topo para garantir que o usuário vê o conteúdo
+      window.scrollTo(0, 0);
+    }
+
+    // Inicializar quando a página carregar
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initOnboarding);
+    } else {
+      initOnboarding();
+    }
+
+    // Fechar ao clicar fora (no overlay)
+    document.getElementById('onboardingOverlay')?.addEventListener('click', function(e) {
+      if (e.target === this && currentStep > 1) {
+        skipOnboarding();
+      }
+    });
+
+    // Teclado: Esc para sair, Setas para navegar
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && currentStep > 1) skipOnboarding();
+      if (e.key === 'ArrowRight') nextStep();
+      if (e.key === 'ArrowLeft') previousStep();
+    });
+  </script>
+
+</body>
+</html>
