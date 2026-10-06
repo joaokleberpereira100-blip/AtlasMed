@@ -102,7 +102,7 @@ h1{font:700 clamp(2.4rem,5.2vw,4.2rem)/1.04 var(--f-d);letter-spacing:-.022em;ma
 
 /* ---------- Números ---------- */
 .stats-wrap{position:relative;z-index:3;margin-top:-92px}
-.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:var(--sf);border:1px solid var(--bd);border-radius:26px;box-shadow:var(--sh)}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));background:var(--sf);border:1px solid var(--bd);border-radius:26px;box-shadow:var(--sh)}
 .stat{padding:26px 24px;display:flex;flex-direction:column;gap:4px}
 .stat+.stat{border-left:1px solid var(--bd)}
 .stat b{font:700 clamp(2.2rem,4vw,3.1rem)/1 var(--f-d);color:var(--pr);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
@@ -345,7 +345,7 @@ html.js:not(.rm) .rv.in.d1{animation-delay:.12s}
   .hero-grid{grid-template-columns:minmax(0,1fr);gap:56px}
   .hero-copy{max-width:640px}
   .stage{max-width:600px}
-  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stat:nth-child(3){border-left:0}.stat:nth-child(n+3){border-top:1px solid var(--bd)}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stat:nth-child(3){grid-column:1/-1;border-left:0}.stat:nth-child(n+3){border-top:1px solid var(--bd)}
   .s7,.s5,.s6{grid-column:1/-1}
   .steps{grid-template-columns:repeat(2,minmax(0,1fr));gap:36px 24px}.steps::before{display:none}
   .dev-grid,.faq-grid{grid-template-columns:minmax(0,1fr);gap:40px}
@@ -451,10 +451,9 @@ html.js:not(.rm) .rv.in.d1{animation-delay:.12s}
 <!-- ================= NÚMEROS ================= -->
 <div class="wrap stats-wrap">
   <div class="stats rv" id="stats">
-    <div class="stat"><b class="num" data-to="328">328</b><span>livros indexados, cada um com link oficial</span></div>
+    <div class="stat"><b class="num" data-to="328">328</b><span>livros na biblioteca, com links oficiais verificados</span></div>
     <div class="stat"><b class="num" data-to="48">48</b><span>disciplinas, do ciclo básico ao internato</span></div>
     <div class="stat"><b class="num" data-to="2">2</b><span>idiomas de busca: português e inglês</span></div>
-    <div class="stat"><b class="num" data-to="0">0</b><span>PDFs hospedados publicamente por nós</span></div>
   </div>
 </div>
 
