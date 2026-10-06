@@ -46,6 +46,15 @@ var A={
     if(d.access_token){var s=mk(d);store(s);await fetchUser(s);return{done:true}}
     if(d.confirmed_at||d.confirmation_sent_at===undefined&&d.id){await A.login(email,pw);return{done:true}}
     return{confirm:true}},
+  /* confirma o código recebido por e-mail (cadastro ou recuperação). Aceita o código puro ou o link inteiro colado. */
+  verify:async function(code){
+    code=String(code||'').trim();var m=code.match(/(?:confirmation_token|recovery_token|token)=([^&#\s]+)/);if(m)code=decodeURIComponent(m[1]);
+    var t,rec=false;
+    try{t=await call('/verify',{method:'POST',json:{type:'signup',token:code}})}
+    catch(e){if(!e.status)throw e;
+      try{t=await call('/verify',{method:'POST',json:{type:'recovery',token:code}});rec=true}
+      catch(e2){if(!e2.status)throw e2;throw new Error('Código inválido ou expirado. Confira o código ou faça o cadastro de novo.')}}
+    var s=mk(t);store(s);await fetchUser(s);return{login:true,recovery:rec}},
   recover:function(email){return call('/recover',{method:'POST',json:{email:email}})},
   google:function(){location.href=API+'/authorize?provider=google&site_url='+encodeURIComponent(location.origin)},
   token:async function(force){
