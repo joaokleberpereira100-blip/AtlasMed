@@ -227,12 +227,22 @@ footer{border-top:0;padding-top:34px}
 .pf input{width:100%;min-height:46px;padding:10px 14px;border-radius:12px;border:1.5px solid var(--bd);background:var(--bg);color:var(--tx);font:inherit}.pf input[readonly]{opacity:.7}
 .pf input:focus{outline:2px solid var(--tl);outline-offset:1px}
 .pf .msg{padding:10px 14px;border-radius:12px;font-weight:600;font-size:.92rem;background:var(--soft)}.pf .msg.er{border-left:4px solid #c0392b}.pf .msg.ok{border-left:4px solid var(--tl)}
+/* ===== Tour de boas-vindas (treinamento) ===== */
+#tour{color:var(--pr);font-weight:700;font-size:1.05rem;width:38px;min-width:38px;height:38px;min-height:38px;border:1.5px solid var(--bd);border-radius:50%;background:var(--sf);cursor:pointer;display:inline-grid;place-items:center;flex:none;padding:0}#tour:hover{border-color:var(--tl)}
+.tw{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:16px;background:#040c1cb8;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);animation:in .2s ease}
+.tw-m{position:relative;width:min(500px,100%);max-height:calc(100dvh - 32px);overflow:auto;background:var(--sf);color:var(--tx);border:1px solid var(--bd);border-radius:24px;padding:34px 30px 24px;box-shadow:0 30px 80px #0008;text-align:center}
+.tw-x{position:absolute;top:8px;right:8px;width:44px;height:44px;border:0;background:none;color:var(--mu);font-size:1.5rem;line-height:1;cursor:pointer;border-radius:50%}.tw-x:hover{background:var(--soft);color:var(--tx)}
+.tw-i{width:76px;height:76px;margin:0 auto 18px;border-radius:20px;background:var(--soft);display:grid;place-items:center;font-size:2.3rem}
+.tw-m h2{font-size:1.5rem;margin:0 0 10px}.tw-m p{margin:0;color:var(--mu)}.tw-n{font-size:.8rem;font-weight:700;color:var(--tl);letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px!important}
+.tw-b{display:flex;gap:10px;margin-top:24px}.tw-b button{flex:1;min-height:48px;border-radius:99px;font:700 1rem inherit;cursor:pointer;border:1px solid var(--bd);background:var(--sf);color:var(--tx)}.tw-b .p{background:var(--pr);color:var(--pt);border-color:var(--pr)}.tw-b button:hover{filter:brightness(1.08)}
+.tw-d{display:flex;gap:8px;justify-content:center;margin-top:18px}.tw-d button{width:8px;height:8px;padding:0;border:0;border-radius:99px;background:var(--bd);cursor:pointer;transition:width .2s}.tw-d button[aria-current=step]{width:24px;background:var(--pr)}
+@media(max-width:520px){header{gap:6px;padding:8px 10px}.brand{font-size:1.15rem;gap:6px;margin-right:auto}.brand svg{width:24px;height:24px}.kq{flex:none;width:38px;min-height:38px}.hg{flex:none;padding:0 7px;min-height:38px}.hg span{display:none}#th{min-width:38px}#tour{width:36px;min-width:36px;height:36px;min-height:36px}.av{flex:none}.tw-m{padding:30px 20px 20px}.tw-m h2{font-size:1.3rem}.tw-i{width:64px;height:64px;font-size:1.9rem}}
 </style></head><body>
 <a class="skip" href="#app">Pular para o conteúdo</a>
 <header><a class="brand" href="#/" aria-label="AtlasMed, início"><svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M16 6v20M6 16h20" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="16" cy="16" r="3.4" fill="#e5614b"/></svg>Atlas<i>Med</i></a>
 <nav aria-label="Principal"><a data-n="" href="#/">Início</a><a data-n="busca" href="#/busca/">Buscar</a><a data-n="biblioteca" href="#/biblioteca">Biblioteca</a><a data-n="disciplinas" href="#/disciplinas">Disciplinas</a><a data-n="meu-estudo" href="#/meu-estudo">Meu estudo</a><a data-n="estudo" href="#/estudo">Estudar PDF</a><a data-n="traduzir" href="#/traduzir">Traduzir PDF</a></nav>
 <button id="kq" class="kq" type="button" data-kq aria-label="Busca rápida (Ctrl K)"><span>Buscar</span><kbd>Ctrl K</kbd></button><a id="hg" class="hg" href="#/" aria-label="Meta de estudo de hoje"><i aria-hidden="true"></i><span>0/30 min</span></a>
-<button id="th" class="ic" aria-label="Alternar modo escuro">◐</button><div class="avw"><button id="av" class="av" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="avm" aria-label="Minha conta">?</button><div id="avm" class="avm" role="menu" hidden></div></div></header>
+<button id="tour" type="button" data-tour aria-label="Ver o tour de treinamento" title="Ver o tour de treinamento">?</button><button id="th" class="ic" aria-label="Alternar modo escuro">◐</button><div class="avw"><button id="av" class="av" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="avm" aria-label="Minha conta">?</button><div id="avm" class="avm" role="menu" hidden></div></div></header>
 <main id="app" tabindex="-1"></main>
 <footer>AtlasMed é uma ferramenta educacional. Conteúdo gerado com auxílio de IA é identificado como tal, não é conteúdo oficial dos livros, não foi revisado por especialista e não é orientação individual a pacientes. Obras comerciais: apenas metadados, referências e links legítimos. Obras de acesso aberto: link para a fonte oficial e a licença que ela declara; o AtlasMed não hospeda os arquivos. Anotações, PDFs anexados e o histórico de estudo ficam só no seu navegador. Os recursos de IA são opcionais, só rodam quando você clica e vêm marcados.</footer>
 <script>
@@ -1620,17 +1630,18 @@ document.addEventListener('click',e=>{const t=e.target.closest('[data-rn]');if(!
 const AU=window.AM_AUTH,fmtMem=d=>{try{return new Date(d).toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})}catch(e){return''}};
 function avUpd(){const u=AU&&AU.user();const b=$('#av');if(!b||!u)return;b.textContent=AU.initial(u);b.title=u.name||u.email}
 function avMenu(open){const m=$('#avm'),b=$('#av'),u=AU&&AU.user()||{};if(!open){m.hidden=true;b.setAttribute('aria-expanded','false');return}
- m.innerHTML=`<div class="who"><b>${esc(u.name||AU.first(u)||'Minha conta')}</b><span>${esc(u.email||'')}</span></div><a role="menuitem" href="#/perfil">Meu perfil</a><a role="menuitem" href="#/perfil/editar">Editar perfil</a><a role="menuitem" href="#/meu-estudo">Meu estudo</a><a role="menuitem" href="/">Página inicial do AtlasMed</a><button role="menuitem" type="button" id="so" class="out">Sair</button>`;
+ m.innerHTML=`<div class="who"><b>${esc(u.name||AU.first(u)||'Minha conta')}</b><span>${esc(u.email||'')}</span></div><a role="menuitem" href="#/perfil">Meu perfil</a><a role="menuitem" href="#/perfil/editar">Editar perfil</a><a role="menuitem" href="#/meu-estudo">Meu estudo</a><button role="menuitem" type="button" data-tour>Rever o treinamento</button><a role="menuitem" href="/">Página inicial do AtlasMed</a><button role="menuitem" type="button" id="so" class="out">Sair</button>`;
  m.hidden=false;b.setAttribute('aria-expanded','true');$('#so').onclick=doOut;m.querySelector('a').focus()}
 async function doOut(){await AU.logout();location.replace('/')}
 $('#av').onclick=e=>{e.stopPropagation();avMenu($('#avm').hidden)};
-document.addEventListener('click',e=>{if(!e.target.closest('.avw'))avMenu(false);else if(e.target.closest('#avm a'))avMenu(false)});
+document.addEventListener('click',e=>{if(!e.target.closest('.avw'))avMenu(false);else if(e.target.closest('#avm a,#avm [data-tour]'))avMenu(false)});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#avm').hidden){avMenu(false);$('#av').focus()}});
 function vProfile(){const u=AU.user()||{},tot=Object.values(ST.days).reduce((a,b)=>a+b,0),pw=u.provider==='email';
  return`<div class="v pf"><section class="pfh"><span class="av" aria-hidden="true">${esc(AU.initial(u))}</span><div><h1>${esc(u.name||'Sem nome')}</h1><p>${esc(u.email||'')}</p><p>${pw?'Conta com e-mail e senha':'Conta conectada com '+esc(u.provider[0].toUpperCase()+u.provider.slice(1))}${u.created?' · membro desde '+esc(fmtMem(u.created)):''}</p></div></section>
 <section class="pfs" aria-label="Seu progresso"><div><b>${fmtMin(tot)}</b><span>estudados</span></div><div><b>${Object.keys(ST.days).length}</b><span>dias com estudo</span></div><div><b>${Object.values(ST.bs).filter(x=>x==='f').length}</b><span>livros lidos</span></div><div><b>${ST.fav.length}</b><span>favoritos</span></div></section>
 <section class="pn"><h2>Editar perfil</h2><form id="pfn" novalidate><label for="pn">Nome</label><input id="pn" autocomplete="name" value="${esc(u.name||'')}" maxlength="80"><label for="pe">E-mail</label><input id="pe" value="${esc(u.email||'')}" readonly aria-describedby="peh"><p class="mu2" id="peh">O e-mail é o seu login e não pode ser alterado aqui.</p><div class="msg" id="pfm" role="status" hidden></div><div class="row2"><button class="pill go" type="submit">Salvar alterações</button></div></form></section>
 ${pw?`<section class="pn"><h2>Alterar senha</h2><form id="pfp" novalidate><label for="pp">Nova senha</label><input id="pp" type="password" autocomplete="new-password" placeholder="Mínimo de 8 caracteres"><div class="msg" id="pfq" role="status" hidden></div><div class="row2"><button class="pill go" type="submit">Alterar senha</button></div></form></section>`:''}
+<section class="pn"><h2>Treinamento</h2><p class="mu2" style="margin:6px 0 0">Reveja quando quiser o tour rápido que mostra como usar a busca, a biblioteca e o estudo de PDF.</p><div class="row2"><button class="pill go" type="button" data-tour>Rever o treinamento</button></div></section>
 <section class="pn"><h2>Sessão</h2><p class="mu2" style="margin:6px 0 0">Seu progresso e anotações ficam salvos neste navegador. Em computador compartilhado, baixe uma cópia na página inicial antes de sair.</p><div class="row2"><button class="pill" type="button" id="pfo">Sair da conta</button></div></section></div>`}
 function profBind(){const msg=(id,t,ok)=>{const e=$(id);e.hidden=false;e.className='msg '+(ok?'ok':'er');e.textContent=t};
  $('#pfo').onclick=doOut;
@@ -1656,6 +1667,28 @@ document.addEventListener('click',e=>{const t=e.target.closest('[data-f],[data-m
 const setT=t=>{document.documentElement.dataset.theme=t;try{localStorage.setItem('amt',t)}catch(e){}};
 try{const t=localStorage.getItem('amt');if(t)document.documentElement.dataset.theme=t}catch(e){}
 $('#th').onclick=()=>setT((document.documentElement.dataset.theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'))==='dark'?'light':'dark');
+/* tour de boas-vindas: abre sozinho na primeira visita e pelo botão "?" / menu da conta / perfil, quando o aluno quiser */
+const TOUR=[['👋','Bem-vindo ao AtlasMed!','Vamos te mostrar como aproveitar a plataforma em menos de 2 minutos.'],
+['🔍','Busque por assunto','Digite qualquer doença, estrutura ou fármaco. O AtlasMed organiza os livros por perspectiva: fisiologia, farmacologia, semiologia e outras.','#/busca/'],
+['📚','Acesse a biblioteca',()=>`Navegue pelos ${BOOKS.length} livros e filtre por disciplina e idioma. Cada livro traz o link da fonte oficial.`,'#/biblioteca'],
+['📖','Estude seus PDFs','Anexe um PDF para ler, anotar com caneta, estudar por assunto e traduzir lado a lado, tudo no seu navegador.','#/estudo'],
+['🚀','Pronto para começar?','Você pode rever este tour quando quiser pelo botão “?” no topo da tela ou no menu da sua conta.']];
+let tourI=0,tourF=null;
+const tourDone=()=>{try{localStorage.setItem('atlasmed_onboarding_done','true')}catch(e){}};
+function tourClose(){const w=$('#tw');if(!w)return;w.remove();tourDone();if(tourF&&tourF.isConnected)tourF.focus();tourF=null}
+function tourDraw(){const w=$('#tw');if(!w)return;const n=TOUR.length,[ic,h,t]=TOUR[tourI],last=tourI===n-1;
+ w.innerHTML=`<div class="tw-m" role="dialog" aria-modal="true" aria-labelledby="tw-h"><button class="tw-x" type="button" data-tw="x" aria-label="Fechar o tour">×</button><div class="tw-i" aria-hidden="true">${ic}</div><p class="tw-n">Passo ${tourI+1} de ${n}</p><h2 id="tw-h">${esc(h)}</h2><p>${esc(typeof t==='function'?t():t)}</p><div class="tw-b">${tourI?'<button type="button" data-tw="p">Voltar</button>':'<button type="button" data-tw="x">Pular</button>'}<button type="button" class="p" data-tw="${last?'x':'n'}">${last?'Começar a estudar':tourI?'Próximo':'Começar tour'}</button></div><div class="tw-d">${TOUR.map((_,i)=>`<button type="button" data-tw="g${i}" aria-label="Ir para o passo ${i+1}"${i===tourI?' aria-current="step"':''}></button>`).join('')}</div></div>`;
+ w.querySelector('.tw-b .p').focus()}
+function tourOpen(){if($('#tw'))return;if($('#cp'))cpClose();tourF=document.activeElement;tourI=0;const w=document.createElement('div');w.id='tw';w.className='tw';document.body.appendChild(w);tourDraw()}
+const tourGo=i=>{tourI=Math.max(0,Math.min(TOUR.length-1,i));tourDraw()};
+document.addEventListener('click',e=>{if(e.target.closest('[data-tour]')){tourOpen();return}
+ const w=$('#tw');if(!w)return;if(e.target===w){tourClose();return}const b=e.target.closest('[data-tw]');if(!b)return;const a=b.dataset.tw;
+ a==='x'?tourClose():a==='n'?tourGo(tourI+1):a==='p'?tourGo(tourI-1):tourGo(+a.slice(1))});
+document.addEventListener('keydown',e=>{const w=$('#tw');if(!w)return;
+ if(e.key==='Escape'){e.preventDefault();e.stopPropagation();tourClose()}else if(e.key==='ArrowRight')tourGo(tourI+1);else if(e.key==='ArrowLeft')tourGo(tourI-1);
+ else if(e.key==='/'){e.stopPropagation()}
+ else if(e.key==='Tab'){const f=[...w.querySelectorAll('button')],a=document.activeElement;if(e.shiftKey&&a===f[0]){e.preventDefault();f[f.length-1].focus()}else if(!e.shiftKey&&a===f[f.length-1]){e.preventDefault();f[0].focus()}}},true);
+try{if(!localStorage.getItem('atlasmed_onboarding_done'))setTimeout(tourOpen,600)}catch(e){}
 hdrUpd();
 if(/^#\/(leitor|estudo|meu-estudo|traduzir)/.test(location.hash)){initPdf().then(()=>route())}else{route();initPdf().then(()=>{if(Object.keys(PM).length)route(true)})}
 </script></body></html>
