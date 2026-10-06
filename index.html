@@ -771,13 +771,10 @@ html.js:not(.rm) .rv.in.d1{animation-delay:.12s}
       <input id="p" name="senha" type="password" autocomplete="current-password" required>
       <button class="eye" type="button" id="eye" aria-label="Mostrar senha" aria-pressed="false"><svg class="ic" aria-hidden="true"><use href="#i-eye"/></svg></button>
     </div></div>
-    <label for="cd" id="cd-l" hidden>Código de confirmação</label>
-    <input id="cd" name="codigo" type="text" inputmode="text" autocomplete="one-time-code" autocapitalize="none" spellcheck="false" placeholder="Cole aqui o código do e-mail" hidden>
     <p class="err" id="err" role="alert" hidden></p>
     <p class="okm" id="okm" role="status" hidden></p>
     <button class="btn btn-cta" type="submit" id="go">Entrar</button>
     <p class="hint" id="h-in"><button type="button" class="lnk" id="forgot">Esqueci minha senha</button></p>
-    <p class="hint" id="h-cd"><button type="button" class="lnk" id="havecode">Recebi um código por e-mail</button></p>
     <p class="hint" id="h-fg" hidden><button type="button" class="lnk" id="back">Voltar para Entrar</button></p>
   </form>
 </dialog>
@@ -850,7 +847,7 @@ $('#pick-change').addEventListener('click',()=>{ $('.plans').scrollIntoView({blo
 /* ====== LOGIN / CADASTRO (Netlify Identity) ====== */
 const dlg=$('#dlg'), form=$('#lf'), err=$('#err'), okm=$('#okm'), em=$('#em'), pI=$('#p'), nm=$('#nm'), go=$('#go');
 let mode='in', reset=false;
-const T={in:['Entrar na plataforma','Use sua conta para acessar o AtlasMed.','Entrar'],up:['Crie sua conta','Crie sua conta e escolha um plano para acessar o AtlasMed.','Criar conta'],fg:['Recuperar senha','Informe seu e-mail e enviaremos um link para criar uma nova senha.','Enviar link'],rs:['Nova senha','Escolha uma nova senha para a sua conta.','Salvar nova senha'],cf:['Confirme seu e-mail','Digite o código que enviamos para o seu e-mail.','Confirmar código']};
+const T={in:['Entrar na plataforma','Use sua conta para acessar o AtlasMed.','Entrar'],up:['Crie sua conta','Crie sua conta e escolha um plano para acessar o AtlasMed.','Criar conta'],fg:['Recuperar senha','Informe seu e-mail e enviaremos um link para criar uma nova senha.','Enviar link'],rs:['Nova senha','Escolha uma nova senha para a sua conta.','Salvar nova senha'],ml:['Confira seu e-mail','','Já confirmei: entrar']};
 function show(el,on){ el.hidden=!on; }
 function setMode(m){
   mode=m; err.hidden=true; okm.hidden=true;
@@ -859,12 +856,11 @@ function setMode(m){
   show($('#tabs'),tab); show($('#or'),tab&&gOn); show($('#gg'),tab&&gOn);
   $('#tab-in').setAttribute('aria-selected',String(m==='in')); $('#tab-up').setAttribute('aria-selected',String(m==='up'));
   show($('#nm-l'),m==='up'); show(nm,m==='up'); nm.required=m==='up';
-  const cf=m==='cf', cd=$('#cd');
-  show(em.previousElementSibling,m!=='rs'&&!cf); show(em,m!=='rs'&&!cf); show($('#pw-w'),m!=='fg'&&!cf);
-  show($('#cd-l'),cf); show(cd,cf);
+  const ml=m==='ml';
+  show(em.previousElementSibling,m!=='rs'&&!ml); show(em,m!=='rs'&&!ml); show($('#pw-w'),m!=='fg'&&!ml);
   pI.autocomplete=m==='in'?'current-password':'new-password';
   $('#p-l').textContent=m==='rs'?'Nova senha':'Senha'; pI.placeholder=m==='up'||m==='rs'?'Mínimo de 8 caracteres':'';
-  show($('#h-in'),m==='in'); show($('#h-cd'),tab); show($('#h-fg'),m==='fg'||cf);
+  show($('#h-in'),m==='in'); show($('#h-fg'),m==='fg');
   $('#gg-t').textContent=m==='up'?'Cadastrar com Google':'Continuar com Google';
 }
 let gOn=false;
@@ -901,8 +897,7 @@ function openLogin(m){
 $$('[data-login]').forEach(b=>b.addEventListener('click',()=>openLogin('in')));
 $$('[data-signup]').forEach(b=>b.addEventListener('click',()=>openLogin('up')));
 $('#tab-in').addEventListener('click',()=>setMode('in')); $('#tab-up').addEventListener('click',()=>setMode('up'));
-$('#forgot').addEventListener('click',()=>setMode('fg'));
-$('#havecode').addEventListener('click',()=>{ setMode('cf'); setTimeout(()=>$('#cd').focus(),30); }); $('#back').addEventListener('click',()=>setMode('in'));
+$('#forgot').addEventListener('click',()=>setMode('fg')); $('#back').addEventListener('click',()=>setMode('in'));
 $('#gg').addEventListener('click',()=>AUTH.google());
 $('#dlg-x').addEventListener('click',()=>dlg.close());
 dlg.addEventListener('click',e=>{ if(e.target===dlg) dlg.close(); });
@@ -912,16 +907,8 @@ function fail(msg){ okm.hidden=true; err.textContent=msg; err.hidden=false; err.
 function good(msg){ err.hidden=true; okm.textContent=msg; okm.hidden=false; }
 form.addEventListener('submit',async e=>{
   e.preventDefault(); if(!AUTH){ fail('Não foi possível carregar o login. Recarregue a página.'); return; }
+  if(mode==='ml'){ const keep=em.value; setMode('in'); em.value=keep; setTimeout(()=>pI.focus(),30); return; }
   const email=em.value.trim().toLowerCase(), pw=pI.value, name=nm.value.trim(), label=go.textContent;
-  if(mode==='cf'){
-    const code=$('#cd').value.trim(); if(!code){ fail('Digite o código que chegou no seu e-mail.'); $('#cd').focus(); return; }
-    go.disabled=true; go.textContent='Conferindo…';
-    try{ const r=await AUTH.verify(code); go.disabled=false;
-      if(r.recovery){ reset=true; setMode('rs'); setTimeout(()=>pI.focus(),30); return; }
-      go.textContent='Entrando…'; await enter(); }
-    catch(x){ go.disabled=false; go.textContent=label; fail(x.message||'Não foi possível confirmar.'); }
-    return;
-  }
   if(mode!=='rs'&&!/^\S+@\S+\.\S+$/.test(email)){ fail('Informe um e-mail válido.'); em.focus(); return; }
   if(mode==='up'&&!name){ fail('Informe seu nome.'); nm.focus(); return; }
   if(mode!=='fg'&&!pw){ fail(mode==='in'?'Informe a senha.':'Escolha uma senha.'); pI.focus(); return; }
@@ -931,8 +918,8 @@ form.addEventListener('submit',async e=>{
     if(mode==='in'){ await AUTH.login(email,pw); go.textContent='Entrando…'; await enter(); return; }
     if(mode==='up'){ const r=await AUTH.signup(name,email,pw);
       if(r.done){ go.textContent='Conta criada…'; await enter(); return; }
-      go.disabled=false; setMode('cf'); good('Conta criada! Enviamos um código de confirmação para '+email+'. Digite-o acima (confira também o spam).'); setTimeout(()=>$('#cd').focus(),30); return; }
-    if(mode==='fg'){ await AUTH.recover(email); go.disabled=false; setMode('cf'); good('Se este e-mail tiver conta, o código de recuperação já está a caminho. Digite-o acima (confira também o spam).'); return; }
+      go.disabled=false; setMode('ml'); $('#dlg-s').textContent='Conta criada! Enviamos um link de confirmação para '+email+'.'; good('Abra o e-mail e toque no link: ele confirma a conta e traz você de volta ao AtlasMed já logado. Não chegou? Confira o spam.'); return; }
+    if(mode==='fg'){ await AUTH.recover(email); go.disabled=false; setMode('ml'); $('#dlg-s').textContent='Se '+email+' tiver conta, o link de recuperação já está a caminho.'; good('Abra o e-mail e toque no link para criar a nova senha. Não chegou? Confira o spam.'); go.textContent='Voltar para Entrar'; return; }
     if(mode==='rs'){ await AUTH.update({password:pw}); await enter(); return; }
   }catch(x){ go.disabled=false; go.textContent=label; fail(x.message||'Não foi possível concluir.'); }
 });
