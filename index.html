@@ -672,6 +672,17 @@ html.js:not(.rm) .rv.in.d1{animation-delay:.12s}
       <div class="cmp-row"><span>Plano anual</span><div class="track"><i class="g" style="--w:83.33%"></i><em id="c-eco">−R$ 220</em></div><b id="c-anual">R$ 1.100</b></div>
     </div>
     <p class="fine">Ao escolher um plano, você conversa com um atendente no WhatsApp para concluir.</p>
+
+    <!-- AVISO DE RENOVAÇÃO ===== -->
+    <div class="payment-info rv" style="max-width:940px;margin:44px auto 0;padding:20px 24px;border-radius:20px;background:var(--soft);border-left:4px solid var(--tl);display:grid;gap:12px">
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <svg class="ic" style="color:var(--tl);flex:none;margin-top:2px" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 2" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+        <div style="flex:1">
+          <strong style="display:block;color:var(--pr);font-size:1.05rem;margin-bottom:4px">Seu pagamento será renovado todo dia 30</strong>
+          <p style="color:var(--mu);font-size:.95rem;margin:0;line-height:1.5">Todos os usuários têm o mesmo dia de vencimento (dia 30 de cada mês). Isso garante uma melhor organização financeira e facilita futuras mudanças de modelo de negócio, caso você queira migrar de PF para PJ.</p>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -763,8 +774,11 @@ html.js:not(.rm) .rv.in.d1{animation-delay:.12s}
 (()=>{
 'use strict';
 /* ====== CONFIGURAÇÃO ====== */
-// Número do WhatsApp dos atendentes: DDI + DDD + número, só dígitos. Ex.: '5571999999999'
-const WHATSAPP = '';
+// Links de checkout do Kiwify
+const KIWIFY = {
+  mensal: 'https://pay.kiwify.com.br/xlpDZiO',
+  anual: 'https://pay.kiwify.com.br/4nzHrR3'
+};
 const APP = '/app/';
 const AUTH = window.AM_AUTH;
 const PLANOS = {mensal:{nome:'Mensal',valor:110,por:'por mês'}, anual:{nome:'Anual',valor:1100,por:'por ano'}};
@@ -789,7 +803,7 @@ set('pct',pctTxt); set('c-cheio',brl0.format(cheio)); set('c-anual',brl0.format(
 const fill = $('#cmp .track i.g'); if(fill) fill.style.setProperty('--w',(PLANOS.anual.valor/cheio*100).toFixed(2)+'%');
 const gapEl = $('#cmp .track em'); if(gapEl) gapEl.style.width=pct.toFixed(2)+'%';
 
-/* ====== ESCOLHA DE PLANO + WHATSAPP ====== */
+/* ====== ESCOLHA DE PLANO + COMPRA KIWIFY ====== */
 const pick=$('#pick'), wa=$('#wa');
 function choose(key){
   const p=PLANOS[key]; if(!p) return;
@@ -800,14 +814,16 @@ function choose(key){
   });
   $('#pick-name').textContent='Plano '+p.nome;
   $('#pick-price').textContent=brl0.format(p.valor)+' '+p.por;
-  if (WHATSAPP) {
-    const msg='Olá! Quero contratar o plano '+p.nome+' do AtlasMed ('+brl0.format(p.valor)+' '+p.por+'). Pode me ajudar?';
-    wa.href='https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent(msg);
+
+  // Redireciona para Kiwify
+  const kiwifyLink = KIWIFY[key];
+  if (kiwifyLink) {
+    wa.href = kiwifyLink;
+    wa.setAttribute('target', '_blank');
     wa.removeAttribute('aria-disabled');
-  } else {
-    wa.removeAttribute('href'); wa.setAttribute('aria-disabled','true');
-    $('#wa-t').textContent='Atendimento por WhatsApp em breve';
+    $('#wa-t').textContent = 'Ir para pagamento no Kiwify';
   }
+
   const first = pick.hidden; pick.hidden=false;
   if (first) { pick.style.animation='none'; pick.offsetWidth; pick.style.animation=''; }
   pick.scrollIntoView({block:'nearest',behavior:rm?'auto':'smooth'});
